@@ -1,29 +1,50 @@
 import pandas as pd
+import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-csv_path = r'E:\pythonProject\9topics\pca_data.csv'
-df = pd.read_csv(csv_path)
-features = df.loc[:, 'pca_feature1':'pca_feature500']
-# 进行KMeans聚类
-kmeans = KMeans(n_clusters=9, random_state=0)
-df['label'] = kmeans.fit_predict(features)
+import os
 
-# 初始化PCA模型，设置目标维度为2
+# 读取PCA处理后的数据
+data_path = '../data/pca_data.csv'
+df = pd.read_csv(data_path)
+
+# 选择PCA特征进行聚类
+features = df.loc[:, 'pca_feature1':'pca_feature100']
+
+# 进行KMeans聚类
+print("Performing KMeans clustering...")
+kmeans = KMeans(n_clusters=9, random_state=0, n_init=10)
+# 添加错误处理和替代方案
+try:
+    df['label'] = kmeans.fit_predict(features)
+except AttributeError:
+    # 使用替代方法：先fit再predict
+    kmeans.fit(features)
+    df['label'] = kmeans.predict(features)
+
+# 使用PCA将特征降至2维以便可视化
 pca = PCA(n_components=2)
-# 对特征进行降维
-features = pca.fit_transform(features)
+features_2d = pca.fit_transform(features)
+
+# 绘制聚类结果
 plt.figure(figsize=(10, 6))
-plt.scatter(features[:, 0], features[:, 1], c=df['label'], cmap='tab10')
+plt.scatter(features_2d[:, 0], features_2d[:, 1], c=df['label'], cmap='tab10')
 plt.title('KMeans Clustering')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.colorbar(label='Label')
+plt.xlabel('First Principal Component')
+plt.ylabel('Second Principal Component')
+plt.colorbar(label='Cluster Label')
 plt.show()
-labeled_data_csv_path = r'E:\pythonProject\9topics\labeled_data.csv'
-df.to_csv(labeled_data_csv_path, index=False)
-# 根据标签进行分组并连接相同标签的文本
+
+# 保存带标签的完整数据
+output_path = '../data/labeled_data.csv'
+df.to_csv(output_path, index=False)
+print(f"\nLabeled data saved to {output_path}")
+
+# 根据标签分组并连接相同标签的文本
 labeled_text_df = df.groupby('label')['text'].apply(lambda x: ','.join(x)).reset_index()
-# 保存到CSV文件
-labeled_text_csv_path = r'E:\pythonProject\9topics\labeled_text.csv'
-labeled_text_df.to_csv(labeled_text_csv_path, index=False)
+
+# 保存分组后的文本
+text_output_path = '../data/labeled_text.csv'
+labeled_text_df.to_csv(text_output_path, index=False)
+print(f"Labeled text saved to {text_output_path}")

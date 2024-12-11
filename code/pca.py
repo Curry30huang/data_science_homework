@@ -1,30 +1,74 @@
 import pandas as pd
 import numpy as np
-import ast
 from sklearn.decomposition import PCA
-# 从CSV文件读取数据
-csv_path = r'E:\pythonProject\9topics\vec_data.csv'
-df = pd.read_csv(csv_path)
-# 将字符串表示的列表转为实际的列表
-df['vec'] = df['vec'].apply(lambda x: np.array(ast.literal_eval(x)))
-# 将每一行展平为一维数组
-df['vec'] = df['vec'].apply(lambda x: np.concatenate(x))
-# 计算最大长度
-max_len = max(df['vec'].apply(len))
-print(max_len)
-# 补零
-df['vec'] = df['vec'].apply(lambda x: np.pad(x, (0, max_len - len(x)), 'constant'))
+import matplotlib.pyplot as plt
+from word2vec import vectorize
 
-# # 创建新的DataFrame，每一位作为一列特征
-features_df = pd.DataFrame(df['vec'].to_list(), columns=[f'feature{i+1}' for i in range(max_len)])
-# # 合并原始DataFrame和新的特征DataFrame
-df = pd.concat([df, features_df], axis=1)
-# 选择 'feature1' 到 'feature6150' 这些特征进行降维
-features_to_pca = df.loc[:, 'feature1':'feature'+str(max_len)]
-# 使用PCA进行降维到500维
-pca = PCA(n_components=500)
-df_pca = pd.DataFrame(pca.fit_transform(features_to_pca), columns=[f'pca_feature{i+1}' for i in range(500)])
-df = pd.concat([df, df_pca], axis=1)
-# # 保存带有标签的数据
-labeled_data_csv_path = r'E:\pythonProject\9topics\pca_data.csv'
-df.to_csv(labeled_data_csv_path, index=False)
+def pad_vectors(vectorized_corpus):
+    """将不同长度的词向量补零到相同长度"""
+    # 计算最大长度
+    max_len = 0
+    for doc_vectors in vectorized_corpus:
+        total_len = doc_vectors.shape[0] * doc_vectors.shape[1]
+        if total_len > max_len:
+            max_len = total_len
+
+    # 将每个文档的词向量展平并补零
+    padded_vectors = []
+    for doc_vectors in vectorized_corpus:
+        # 展平词向量
+        flattened = doc_vectors.reshape(-1)
+        # 补零
+        padded = np.pad(flattened, (0, max_len - len(flattened)), 'constant')
+        padded_vectors.append(padded)
+
+    return np.array(padded_vectors), max_len
+
+# 主程序
+if __name__ == "__main__":
+    # 读取数据
+    data_path = '../data/processed_data.csv'
+    df = pd.read_csv(data_path)
+
+    # 使用word2vec获取词向量
+    print("Converting documents to vectors...")
+    vectorized_corpus = vectorize(df)
+
+    # 补零处理
+    print("Padding vectors to same length...")
+    padded_vectors, max_len = pad_vectors(vectorized_corpus)
+    print(f"Max vector length: {max_len}")
+
+    # 使用PCA进行降维
+    print("Performing PCA...")
+    pca = PCA(n_components=100)  # 降至100维
+    X_pca = pca.fit_transform(padded_vectors)
+
+    # 计算解释方差比
+    explained_variance_ratio = pca.explained_variance_ratio_
+    print(f"Total explained variance: {sum(explained_variance_ratio):.4f}")
+
+    # 创建包含PCA结果的DataFrame
+    pca_features = pd.DataFrame(
+        X_pca,
+        columns=[f'pca_feature{i+1}' for i in range(100)]
+    )
+
+    # 将PCA结果添加到原始数据中
+    result_df = pd.concat([df, pca_features], axis=1)
+
+    # 保存结果
+    output_path = '../data/pca_data.csv'
+    result_df.to_csv(output_path, index=False)
+    print(f"\nResults saved to {output_path}")
+
+    # 绘制解释方差比累积图
+    plt.figure(figsize=(10, 6))
+    cumsum_variance_ratio = np.cumsum(explained_variance_ratio)
+    plt.plot(range(1, len(explained_variance_ratio) + 1),
+            cumsum_variance_ratio, 'bo-')
+    plt.xlabel('Number of Components')
+    plt.ylabel('Cumulative Explained Variance Ratio')
+    plt.title('Explained Variance Ratio vs. Number of Components')
+    plt.grid(True)
+    plt.show()
