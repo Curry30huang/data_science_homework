@@ -57,7 +57,7 @@ def save_data(data: pd.DataFrame, output_path: str, columns: list = None):
     data.to_csv(output_path, index=False, encoding='utf-8')
 
 if __name__ == '__main__':
-    file_path = "../data/1_search_contents_2024-12-09.csv"
+    file_path = "../data/merged_data.csv"
     data = read_data(file_path)
     file_dir = "../stop_words"
     stop_words = read_stopwords(file_dir)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     # 保存处理后的数据
     output_path = "../data/processed_data.csv"
     # 例如只保存 'text' 和其他你需要的列
-    columns_to_save = ['text','content_id','content_text']  # 根据需要修改列名
+    columns_to_save = ['text','content_id','content_text','created_time']  # 根据需要修改列名
     save_data(data, output_path, columns_to_save)
 
     print(data.head())

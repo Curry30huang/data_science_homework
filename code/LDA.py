@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # 读取数据
     data_path = '../data/processed_data.csv'
     data = pd.read_csv(data_path)
-    # 剔���小于1000词语的文本
+    # 剔除小于1000词语的文本
     data = data[data.text.str.split(' ').str.len() > 1000]
 
     # 特征提取
@@ -41,8 +41,8 @@ if __name__ == "__main__":
     tf_vectorizer = CountVectorizer(
         strip_accents='unicode',
         max_features=n_features,
-        max_df=0.95, # TODO:  词语在文档中出现的频率大于95%的词语，后续应该调整为50%
-        min_df=2 # TODO: 词语在文档中出现的频率小于2的词语，后续应该调整为10
+        max_df=0.5, #  词语在文档中出现的频率大于的词语，
+        min_df=10 # 词语在文档中出现的频率小于10的词语
     )
     tf = tf_vectorizer.fit_transform(data.text)
 
@@ -68,8 +68,8 @@ if __name__ == "__main__":
     x = list(range(1, n_t+1))
     plot_perplexity(x, plexs[0:n_t])
 
-    # TODO: 选择最佳主题数量（这里使用4个主题作为示例）
-    n_topics = 4
+    # TODO: 选择最佳主题数量（这里使用7个主题作为示例）
+    n_topics = 7
     print(f"\nTraining final LDA model with {n_topics} topics...")
 
     # 训练最终模型
@@ -101,6 +101,6 @@ if __name__ == "__main__":
     data['每个主题对应概率'] = list(topics)
 
     # 保存结果
-    output_path = 'data/data_topic.csv'
+    output_path = '../data/data_topic.csv'
     data.to_csv(output_path, index=False)
     print(f"\nResults saved to {output_path}")

@@ -18,3 +18,14 @@
 # 开源资源下载
 
 中文停用词表下载：https://github.com/goto456/stopwords
+
+# 实验结果说明
+
+- 首先运行merge_data.py，将三个数据集整合为一个数据集
+- 运行process.py 处理数据存储到 data/processed_data.csv
+- 运行topiccloud.py 生成主题词云, 保存到 data/wordcloud.png
+- 运行word2vec.py 生成词向量，保存到 data/vec_data.csv
+- 运行LDA.py 进行LDA主题模型分析,绘制困惑度折线图,选择最佳主题数量为7，如果需要查看图像与打印词需要重新运行一下
+- pca.py 进行pca降维,保存到 data/pca_data.csv
+- 运行kmeans.py 进行kmeans聚类，保存结果到 data/labeled_data.csv 和 data/labeled_text.csv。如果需要得到PCA降维到2维图像结果需要重新运行一下。
+- 运行classify.py 进行热点话题预测分类

@@ -32,9 +32,8 @@ svm_y_score = svm.predict_proba(X_test)
 
 # 绘制逻辑回归的ROC曲线
 plt.figure(figsize=(10, 6))
-for i in range(len(set(y))):
-    fpr_lr, tpr_lr, _ = roc_curve(label_binarize(y_test, classes=list(set(y)))[:, i], lr_y_score[:, i],
-                                  drop_intermediate=False)
+for i in range(lr_y_score.shape[1]):
+    fpr_lr, tpr_lr, _ = roc_curve(label_binarize(y_test, classes=list(set(y)))[:, i], lr_y_score[:, i])
     roc_auc_lr = roc_auc_score(label_binarize(y_test, classes=list(set(y)))[:, i], lr_y_score[:, i])
 
     # 使用插值法使曲线更平滑
@@ -55,7 +54,7 @@ plt.show()
 
 # 绘制SVM的ROC曲线
 plt.figure(figsize=(10, 6))
-for i in range(len(set(y))):
+for i in range(svm_y_score.shape[1]):
     fpr_svm, tpr_svm, _ = roc_curve(label_binarize(y_test, classes=list(set(y)))[:, i], svm_y_score[:, i],
                                     drop_intermediate=False)
     roc_auc_svm = roc_auc_score(label_binarize(y_test, classes=list(set(y)))[:, i], svm_y_score[:, i])

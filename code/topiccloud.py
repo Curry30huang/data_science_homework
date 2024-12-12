@@ -18,7 +18,7 @@ wordcloud = WordCloud(
     width=1600,
     height=800,
     background_color='white',
-    font_path='simhei.ttf',  # 使用中文字体
+    font_path='../data/SimHei.ttf',  # 使用中文字体
     max_words=200,
     max_font_size=150,
     min_font_size=10,
@@ -31,3 +31,6 @@ plt.axis('off')
 
 # 显示图形
 plt.show()
+
+# 保存词云图片
+wordcloud.to_file('../data/wordcloud.png')

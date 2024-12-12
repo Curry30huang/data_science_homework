@@ -26,9 +26,9 @@ def vectorize(data):
     return vectorized_corpus
 
 # 导出
-# def export(data, path = "../data/vec_data.csv"):
-#     data.to_csv(path, index=False)
-#     print("Success export.")
+def export(data, path = "../data/vec_data.csv"):
+    data.to_csv(path, index=False)
+    print("Success export.")
 
 if __name__ == '__main__':
     # 读取处理好的数据
@@ -36,4 +36,4 @@ if __name__ == '__main__':
     data = pd.read_csv(file_path)
     data["vec"] = vectorize(data)
     print(len(data))
-    # export(data)
+    export(data)
