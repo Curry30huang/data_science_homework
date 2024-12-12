@@ -9,6 +9,9 @@
     - process: 数据处理，将处理后的数据存储到process_data目录下
     - topiccloud: 主题词云
     - word2vec: word2vec词向量化
+    - pca: pca降维
+    - kmeans: kmeans聚类
+    - classify: 热点话题预测分类
     - TODO: 于果 添加爬虫程序+数据清洗程序
 
 # 开源资源下载
