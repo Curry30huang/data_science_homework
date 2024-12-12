@@ -6,6 +6,7 @@
 - process_data: 处理后的数据
 - stop_words: 停用词表
 - code: 代码
+    - merge_data: 多源数据集整合
     - process: 数据处理，将处理后的数据存储到process_data目录下
     - topiccloud: 主题词云
     - word2vec: word2vec词向量化
