@@ -71,4 +71,5 @@ if __name__ == "__main__":
     plt.ylabel('Cumulative Explained Variance Ratio')
     plt.title('Explained Variance Ratio vs. Number of Components')
     plt.grid(True)
+    plt.savefig('../data/pca.png')
     plt.show()

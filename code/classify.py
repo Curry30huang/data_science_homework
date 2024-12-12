@@ -8,18 +8,24 @@ from sklearn.preprocessing import label_binarize
 from sklearn.multiclass import OneVsRestClassifier
 from scipy.interpolate import interp1d
 import numpy as np
+import os
+import sys
+# 设置当前的base文件夹是项目根目录文件夹
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+sys.path.append(project_root)
 
 # 读取标注数据
-data_path = '../data/labeled_data.csv'
+data_path = os.path.join(project_root, '../data/labeled_data.csv')
 df = pd.read_csv(data_path)
+df = df[df['label'].map(df['label'].value_counts()) > 1]
+df = df[df['label'] != -1]
 
 # 提取特征和标签
 X = df.loc[:, 'pca_feature1':'pca_feature100']
 y = df['label']
 
 # 将数据集划分为训练集和测试集
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=5, stratify=y)
 # 使用One-vs-Rest策略的逻辑回归
 lr = OneVsRestClassifier(LogisticRegression())
 lr.fit(X_train, y_train)
@@ -48,8 +54,9 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Logistic Regression - Smoothed Multi-Class ROC Curve')
 plt.legend(loc="lower right")
-plt.xlim([0, 0.2])  # 自定义X轴范围
-plt.ylim([0.8, 1.0])  # 自定义Y轴范围
+plt.xlim([0, 1.0])  # 自定义X轴范围
+plt.ylim([0, 1.0])  # 自定义Y轴范围
+plt.savefig(os.path.join(project_root, f'../data/roc_curve_lr.png'))
 plt.show()
 
 # 绘制SVM的ROC曲线
@@ -71,8 +78,9 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('SVM - Smoothed Multi-Class ROC Curve')
 plt.legend(loc="lower right")
-plt.xlim([0, 0.2])  # 自定义X轴范围
-plt.ylim([0.8, 1.0])  # 自定义Y轴范围
+plt.xlim([0, 1.0])  # 自定义X轴范围
+plt.ylim([0, 1.0])  # 自定义Y轴范围
+plt.savefig(os.path.join(project_root, f'../data/roc_curve_svm.png'))
 plt.show()
 
 # 输出整体准确率

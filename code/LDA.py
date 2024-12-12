@@ -22,7 +22,7 @@ def plot_perplexity(n_topics_range, perplexities):
     plt.xlabel("number of topics")
     plt.ylabel("perplexity")
     plt.grid(True)
-    # plt.savefig('output/perplexity_plot.png')
+    plt.savefig('../data/perplexity_plot.png')
     plt.show()
 
 # 主程序
