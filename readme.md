@@ -13,11 +13,16 @@
     - pca: pca降维
     - kmeans: kmeans聚类
     - classify: 热点话题预测分类
-    - TODO: 于果 添加爬虫程序+数据清洗程序
 
 # 开源资源下载
 
-中文停用词表下载：https://github.com/goto456/stopwords
+## 停用词表
+
+- 中文停用词表下载：https://github.com/goto456/stopwords
+
+## 爬虫
+
+- 使用了[MediaCrawler](https://github.com/NanmiCoder/MediaCrawler)对新闻数据进行爬取
 
 # 实验结果说明
 
