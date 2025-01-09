@@ -34,6 +34,11 @@ if __name__ == '__main__':
     # 读取处理好的数据
     file_path = "../data/processed_data.csv"
     data = pd.read_csv(file_path)
-    data["vec"] = vectorize(data)
+    vec = vectorize(data)
+    total_length = 0
+    for v in vec:
+        total_length += len(v)
+    print(total_length)
+    data["vec"] = vec
     print(len(data))
     export(data)

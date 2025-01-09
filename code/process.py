@@ -61,15 +61,36 @@ if __name__ == '__main__':
     data = read_data(file_path)
     file_dir = "../stop_words"
     stop_words = read_stopwords(file_dir)
+    
+    # 统计预处理前的总词汇量
+    original_word_count = 0
+    for text in data["content_text"]:
+        if pd.isna(text) or not isinstance(text, str):
+            continue
+        words = jieba.lcut(text)  # 使用jieba分词
+        original_word_count += len(words)
+    
+    print(f"预处理前总词汇量: {original_word_count} 个词")
+    
+    # 处理文本
     data["text"] = data["content_text"].apply(preprocess_text, args=(stop_words,))
     data = data[data["text"] != '']
+    
+    # 统计预处理后的总词汇量
+    processed_word_count = 0
+    for text in data["text"]:
+        words = text.split()
+        processed_word_count += len(words)
+    
+    print(f"预处理后总词汇量: {processed_word_count} 个词")
+    print(f"词汇量减少: {original_word_count - processed_word_count} 个词")
+    print(f"词汇量减少比例: {((original_word_count - processed_word_count) / original_word_count * 100):.2f}%")
 
     # 保存处理后的数据
     output_path = "../data/processed_data.csv"
-    # 例如只保存 'text' 和其他你需要的列
-    columns_to_save = ['text','content_id','content_text','created_time']  # 根据需要修改列名
+    columns_to_save = ['text','content_id','content_text','created_time']
     save_data(data, output_path, columns_to_save)
 
+    print("\n处理后数据预览:")
     print(data.head())
-    print(len(data))
-
+    print(f"总文档数: {len(data)}")

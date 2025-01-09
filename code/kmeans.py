@@ -30,13 +30,13 @@ for k in range(2, 11):
 print(f"Best number of clusters: {best_k}")
 
 # 使用最佳聚类数量进行KMeans聚类
-kmeans = KMeans(n_clusters=N_CLUSTER, random_state=20000, n_init=100)
+kmeans = KMeans(n_clusters=best_k, random_state=100, n_init=100)
 results = kmeans.fit_predict(features)
 
 # 将results中小于5个元素的聚类标签替换为-1，其余结果改变成从0开始的连续整数
 solid_label = 0
-for i in range(N_CLUSTER):
-    if np.sum(results == i) < 10:
+for i in range(best_k):
+    if np.sum(results == i) < 5:
         results[results == i] = -1
     else:
         results[results == i] = solid_label
@@ -55,9 +55,16 @@ plt.xlabel('First Principal Component')
 plt.ylabel('Second Principal Component')
 plt.colorbar(label='Cluster Label')
 
-# 自定义x轴y轴的范围
-plt.xlim(-150, 25)  # 根据需要调整范围
-plt.ylim(-150, 30)  # 根据需要调整范围
+# 提取x和y的最小值和最大值
+x_min, x_max = features_2d[:, 0].min(), features_2d[:, 0].max()
+y_min, y_max = features_2d[:, 1].min(), features_2d[:, 1].max()
+
+# 设置边距
+margin = 10  # 可以根据需要调整边距大小
+
+# 动态调整x和y轴的范围
+plt.xlim(x_min - margin, 200)
+plt.ylim(-120 , y_max + margin)
 
 plt.savefig('../data/kmeans.png')
 plt.show()

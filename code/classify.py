@@ -25,7 +25,7 @@ X = df.loc[:, 'pca_feature1':'pca_feature100']
 y = df['label']
 
 # 将数据集划分为训练集和测试集
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=5, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=5, stratify=y)
 # 使用One-vs-Rest策略的逻辑回归
 lr = OneVsRestClassifier(LogisticRegression())
 lr.fit(X_train, y_train)
